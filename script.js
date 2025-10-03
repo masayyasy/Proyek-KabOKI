@@ -273,19 +273,21 @@ function editProperti(id) {
 }
 
 function deleteProperti(id) {
-    const modalMessage = "Apakah Anda yakin ingin menghapus data ini?";
-    const modal = createModal(modalMessage, () => {
-        // Hapus dari localStorage dan array lokal
-        propertis = propertis.filter(p => p.id !== id);
-        localStorage.setItem('propertiData', JSON.stringify(propertis));
-        renderPropertiTable();
-        
-        // --- TAMBAH FUNGSI HAPUS KE GOOGLE SHEETS ---
-        syncDeleteToGoogleSheets(id); 
-        // --- END ---
-        
-        closeModal(modal);
-    });
+
+    const modalMessage = "Apakah Anda yakin ingin menghapus data ini?";
+
+    const modal = createModal(modalMessage, () => {
+
+        propertis = propertis.filter(p => p.id !== id);
+
+        localStorage.setItem('propertiData', JSON.stringify(propertis));
+
+        renderPropertiTable();
+
+        closeModal(modal);
+
+    });
+
 }
 
 // Fungsi baru untuk mengirim permintaan Hapus ke Apps Script
