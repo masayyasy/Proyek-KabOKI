@@ -30,13 +30,14 @@ const GOOGLE_APPS_SCRIPT_URL = "YOUR_WEB_APP_URL"; // ganti dengan URL Web App k
 function syncToGoogleSheets(data) {
     fetch(GOOGLE_APPS_SCRIPT_URL, {
         method: "POST",
-        mode: "no-cors",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
     })
-    .then(() => console.log("Data berhasil dikirim ke Google Sheets"))
+    .then(res => res.text())
+    .then(txt => console.log("Respon server:", txt))
     .catch(err => console.error("Gagal sync ke Google Sheets:", err));
 }
+
 
 // Fungsi untuk ambil data dari Google Sheets
 function loadFromGoogleSheets() {
@@ -677,5 +678,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
     }
+
 
 });
