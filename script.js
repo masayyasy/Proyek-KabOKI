@@ -272,51 +272,49 @@ function editProperti(id) {
     }
 }
 
+// --- Edit/Delete Functions (home.html specific) ---
+
+// ... (Fungsi editProperti tetap sama)
+
 function deleteProperti(id) {
     const modalMessage = "Apakah Anda yakin ingin menghapus data ini?";
     const modal = createModal(modalMessage, () => {
-        // Hapus dari localStorage dan array lokal
+        // Hapus dari localStorage dan array lokal (sementara)
         propertis = propertis.filter(p => p.id !== id);
         localStorage.setItem('propertiData', JSON.stringify(propertis));
-        renderPropertiTable();
-        
-        // --- TAMBAH FUNGSI HAPUS KE GOOGLE SHEETS ---
-        syncDeleteToGoogleSheets(id); 
-        // --- END ---
-        
+        renderPropertiTable(); // Render lokal untuk feedback cepat
+
+        // Kirim permintaan hapus ke Google Sheets
+        syncDeleteToGoogleSheets(id);
+
         closeModal(modal);
     });
 }
 
-// Fungsi baru untuk mengirim permintaan Hapus ke Apps Script
+// Fungsi untuk mengirim permintaan Hapus ke Apps Script
 function syncDeleteToGoogleSheets(id) {
+    // ⚠️ Pastikan ini adalah fungsi ini yang Anda gunakan, dan hapus duplikat lainnya!
     fetch(GOOGLE_APPS_SCRIPT_URL + "?action=delete&id=" + id, {
-        method: "GET", // Menggunakan GET/PUT/POST, tapi GET dengan parameter query adalah cara termudah untuk Apps Script
+        method: "GET", 
     })
-    .then(res => res.text())
+    .then(res => {
+        if (!res.ok) {
+            throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+        return res.text();
+    })
     .then(txt => {
         console.log("Respon server Hapus:", txt);
-        // Opsi: Muat ulang data dari Sheets setelah berhasil hapus
-        // loadFromGoogleSheets(); 
+        // ✅ Setelah sukses, muat ulang data dari Sheets untuk memastikan sinkronisasi penuh
+        loadFromGoogleSheets(); 
     })
-    .catch(err => console.error("Gagal hapus dari Google Sheets:", err));
+    .catch(err => {
+        console.error("Gagal hapus dari Google Sheets:", err);
+        // 🚨 Jika gagal, panggil ulang loadFromGoogleSheets() untuk menarik kembali data yang gagal dihapus dari Sheets
+        loadFromGoogleSheets(); 
+        createModal("Gagal menghapus data dari server. Silakan coba lagi.", () => {}); // Beri notifikasi ke user
+    });
 }
-
-// Fungsi baru untuk mengirim permintaan Hapus ke Apps Script
-function syncDeleteToGoogleSheets(id) {
-    fetch(GOOGLE_APPS_SCRIPT_URL + "?action=delete&id=" + id, {
-        method: "GET", // Menggunakan GET/PUT/POST, tapi GET dengan parameter query adalah cara termudah untuk Apps Script
-    })
-    .then(res => res.text())
-    .then(txt => {
-        console.log("Respon server Hapus:", txt);
-        // Opsi: Muat ulang data dari Sheets setelah berhasil hapus
-        // loadFromGoogleSheets(); 
-    })
-    .catch(err => console.error("Gagal hapus dari Google Sheets:", err));
-}
-
-
 
 // --- Modal Kustom (untuk mengganti alert/confirm) ---
 function createModal(message, onConfirm) {
@@ -715,6 +713,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 });
+
 
 
 
