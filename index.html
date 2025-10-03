@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Aplikasi PBB - Input Data Properti</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="logo">Aplikasi Penilaian ZNT PBB P2</div>
+        <ul>
+            <li><a href="index.html">Input Data</a></li>
+            <li><a href="formulir2.html">Formulir 2</a></li>
+            <li class="active"><a href="formulir3.html">Formulir 3</a></li>
+            <li class="active"><a href="analisis.html">Peta Data</a></li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <h2>Input Data Pembanding UNTUK OBJEK / ZNT yang dinilai</h2>
+        <h3>Jl. kel. kec. kab. </h3>
+
+        <div class="content-wrapper">
+            <div class="input-column">
+                <form id="propertiForm">
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label for="alamatObjekPajak">1. Alamat Objek Pajak</label>
+                            <input type="text" id="alamatObjekPajak" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="blokNop">2. Blok/NOP</label>
+                            <input type="text" id="blokNop" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label for="kodeZNT">3. Kode ZNT</label>
+                            <input type="text" id="kodeZNT" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="sumber">4. Sumber</label>
+                            <input type="text" id="sumber" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label for="jenis">5. Jenis</label>
+                            <select id="jenis" required>
+                                <option value="">-- Pilih Jenis --</option>
+                                <option value="Penawaran">PENAWARAN</option>
+                                <option value="Lelang">LELANG</option>
+                                <option value="Agunan Bank">AGUNAN BANK</option>
+                                <option value="Keterangan RT/RW/Lurah">KETERANGAN RT/RW/LURAH</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="tanggal">6. Tanggal</label>
+                            <input type="date" id="tanggal" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label for="hargaTransaksi">7. Harga</label>
+                            <input type="number" id="hargaTransaksi" required min="0">
+                        </div>
+                        <div class="input-group">
+                            <label for="jenisPenggunaan">8. Jenis Penggunaan Bangunan</label>                            
+                            <input type="text" id="jenisPenggunaan" required min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label for="luas">9. Luas (m²)</label>
+                            <input type="number" id="luas" required min="1">
+                        </div>
+                        <div class="input-group">
+                            <label for="lebarSisiDepan">10. Lebar Sisi Depan (m)</label>
+                            <input type="number" id="lebarSisiDepan" required min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label for="ketinggianDariJalan">11. Ketinggian Dari Jalan</label>
+                            <input type="number" id="ketinggianDariJalan" placeholder="Contoh: 0.5 (meter)" step="0.01">
+                        </div>
+                        <div class="input-group">
+                            <label for="bentukTanah">12. Bentuk Tanah</label>
+                            <select id="bentukTanah" required>
+                                <option value="">-- Pilih Bentuk Tanah --</option>
+                                <option value="Normal">NORMAL</option>
+                                <option value="Tidak Beraturan/Ngantong">TIDAK BERATURAN atau NGANTONG</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label for="dataKepemilikan">13. Data Kepemilikan</label>
+                            <select id="dataKepemilikan" required>
+                                <option value="">-- Pilih Kepemilikan --</option>
+                                <option value="SHM">SHM</option>
+                                <option value="Girik/Belum SHM">GIRIK/BELUM SHM</option>
+                                <option value="AJB">AJB</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="namaPemilik">14. Nama Pemilik</label>
+                            <input type="text" id="namaPemilik" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label for="luasBangunan">15. Luas Bangunan (m²)</label>
+                            <input type="number" id="luasBangunan" min="0" value="0">
+                        </div>
+                        <div class="input-group">
+                            <label for="grade">16. Grade</label>
+                            <select id="grade" required>
+                                <option value="">-- Pilih Grade --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label for="Nilai dbkb">17. Nilai Bangunan Dengan DBKB</label>
+                            <input type="number" id="Nilai dbkb" min="0" value="0">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                         <div class="input-group" style="flex: 1;">
+                            <label for="koordinat">Koordinat (Latitude, Longitude)</label>
+                            <input type="text" id="koordinat" readonly required>
+                        </div>
+                    </div>
+
+                    <button type="submit">Tambah Data Properti</button>
+                </form>
+            </div>
+            
+            <div class="map-column">
+                <div id="map"></div>
+                <p class="map-hint">Klik pada peta untuk mendapatkan koordinat.</p>
+
+                <div class="reference-table-container">
+                    <h3>Tabel Data Referensi</h3>
+                    <table id="dataReferensiTable">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>KETERANGAN</th>
+                                <th>NILAI PENYESUAIAN</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>KENAIKAN NILAI TANAH DAN BANGUNAN PER BULAN</td>
+                                <td><input type="text" value="0.5" data-id="kenaikan_per_bulan"></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>PENYESUAIAN DATA PENAWARAN</td>
+                                <td><input type="text" value="0.9" data-id="penyesuaian_penawaran"></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>PENYESUAIAN DATA LELANG</td>
+                                <td><input type="text" value="0.75" data-id="penyesuaian_lelang"></td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>PENYESUAIAN DATA AGUNAN BANK</td>
+                                <td><input type="text" value="0.85" data-id="penyesuaian_agunan"></td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>PENYESUAIAN DATA KETERANGAN RT/RW/LURAH</td>
+                                <td><input type="text" value="0.95" data-id="penyesuaian_keterangan"></td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>PENYESUAIAN FISIK KETINGGIAN DARI JALAN (> ATAU <)</td>
+                                <td><input type="text" value="0.95" data-id="penyesuaian_ketinggian"></td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>PENYESUAIAN FISIK BENTUK TANAH TIDAK BERATURAN/NGANTONG</td>
+                                <td><input type="text" value="0.9" data-id="penyesuaian_bentuk_tanah"></td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td>PENYESUAIAN LAINNYA TANAH BELUM BERSERTIFIKAT HAK ATAS TANAH</td>
+                                <td><input type="text" value="0.9" data-id="penyesuaian_sertifikat"></td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td>HARGA TANAH URUG PER METER KUBIK BORONGAN (dalam rupiah)</td>
+                                <td><input type="text" value="200000" data-id="harga_tanah_urug"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <h3>FORMULIR 1 DATA OBJEK PEMBANDING</h3>
+            <h4></h4>
+            <table class="data-table" id="propertiDataTable">
+                <thead>
+                    <tr>
+                        <th rowspan="2">No</th>
+                        <th rowspan="2">Alamat Objek Pajak</th>
+                        <th rowspan="2">Blok/NOP</th>
+                        <th rowspan="2">Kode ZNT</th>
+                        <th colspan="4">DATA</th>
+                        <th rowspan="2">Harga Transaksi / JUAL BELI (Rp)</th>
+                        <th colspan="5">BUMI/TANAH</th>
+                        <th rowspan="2">Nama Pemilik</th>
+                        <th rowspan="2">Luas Bangunan (m²)</th>
+                        <th rowspan="2">Nilai DBKB</th>
+                        <th rowspan="2">Grade</th>
+                        <th rowspan="2">Koordinat</th>
+                        <th rowspan="2">Aksi</th>
+                    </tr>
+                    <tr>
+                        <th>Sumber</th>
+                        <th>Jenis</th>
+                        <th>Data Kepemilikan</th>
+                        <th>Tanggal</th>
+                        <th>Jenis Penggunaan</th>
+                        <th>Luas (m²)</th>
+                        <th>Lebar Sisi Depan (m)</th>
+                        <th>Ketinggian dari Jalan</th>
+                        <th>Bentuk Tanah</th>
+                    </tr>
+                </thead>
+                <tbody id="propertiTableBody">
+                    <tr><td colspan="18">Belum ada data properti yang ditambahkan.</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <button id="exportHomeTableBtn" class="export-btn">Unduh Tabel Data Properti (CSV)</button>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

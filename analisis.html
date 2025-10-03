@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analisis ZNT</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="formulir2"> 
+  <div class="navbar">
+    <div class="logo">Aplikasi Penilaian ZNT PBB P2</div>
+    <ul>
+      <li><a href="index.html">Input Data</a></li>
+      <li><a href="formulir2.html">Formulir 2</a></li>
+      <li><a href="formulir3.html">Formulir 3</a></li>
+      <li class="active"><a href="analisis.html">Analisis ZNT</a></li>
+    </ul>
+  </div>
+
+  <<div class="container">
+  <h2>PILIH ZONA DAN OBJEK ANALISIS</h2>
+
+  <div class="form-sections">
+    <!-- Bagian Kiri -->
+    <div class="form-card">
+      <h3>Masukkan Objek yang Akan Dinilai</h3>
+      <div class="form-field">
+        <label for="alamatObjekInput">Alamat Objek</label>
+        <input type="text" id="alamatObjekInput" placeholder="Masukkan alamat objek...">
+      </div>
+      <div class="form-field">
+        <label for="alamatDesaInput">Desa Alamat Objek</label>
+        <input type="text" id="alamatDesaInput" placeholder="Masukkan alamat objek...">
+      </div>
+      <div class="form-field">
+        <label for="kodeZNTInput">Kode ZNT</label>
+        <input type="text" id="kodeZNTInput" placeholder="Masukkan kode ZNT...">
+      </div>
+      <div class="form-field">
+        <label for="gradeInputDropdown">Grade Lokasi</label>
+        <select id="gradeInputDropdown">
+          <option value="">-- Pilih Grade --</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Bagian Kanan -->
+    <div class="form-card">
+      <h3>Masukkan Objek Pembanding</h3>
+      <div class="form-field">
+        <label for="alamat1Select">Alamat 1</label>
+        <select id="alamat1Select"><option value="">-- Pilih Alamat --</option></select>
+      </div>
+      <div class="form-field">
+        <label for="alamat2Select">Alamat 2</label>
+        <select id="alamat2Select"><option value="">-- Pilih Alamat --</option></select>
+      </div>
+      <div class="form-field">
+        <label for="alamat3Select">Alamat 3</label>
+        <select id="alamat3Select"><option value="">-- Pilih Alamat --</option></select>
+      </div>
+      <div class="form-field">
+        <label for="alamat4Select">Alamat 4</label>
+        <select id="alamat4Select"><option value="">-- Pilih Alamat --</option></select>
+      </div>
+      <div class="form-field">
+        <label for="alamat4Select">Alamat 5</label>
+        <select id="alamat4Select"><option value="">-- Pilih Alamat --</option></select>
+      </div>
+    </div>
+  </div>
+
+  <div class="button-container">
+    <button id="showAnalysisBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-colors">
+      Nilai
+    </button>
+  </div>
+
+  <!-- Tabel hasil -->
+  <div class="table-container">
+    <table class="data-table" id="analisisDataTable5">
+      <thead>
+        <tr>
+          <th rowspan="2">Nomor</th>
+          <th rowspan="2">Alamat Objek Pajak</th>
+          <th rowspan="2">Blok/NOP</th>
+          <th rowspan="2">Kode ZNT</th>
+          <th rowspan="2">Grade Lokasi</th>
+          <th rowspan="2">Nilai WAJAR Bumi / M2</th>
+          <th colspan="4">PENYESUAIAN (%)</th>
+          <th rowspan="2">NILAI WAJAR Objek/ZNT</th>
+          <th rowspan="2">NILAI WAJAR ZNT REKONSILIASI</th>
+        </tr>
+        <tr>
+          <th>Lokasi (bakal grade)</th>
+          <th>Bentuk Tanah</th>
+          <th>Ketinggian dari Jalan</th>
+          <th>Kepemilikan</th>
+        </tr>
+      </thead>
+      <tbody id="analisisTableBody5">
+        <tr>
+          <td colspan="12" class="px-6 py-4 text-center text-gray-500">
+            Pilih Zona dan Alamat untuk memulai analisis.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+  <script src="script.js"></script>
+</body>
+</html>

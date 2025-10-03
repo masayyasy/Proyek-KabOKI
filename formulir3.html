@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulir 3: Analisis Nilai Wajar Rekonsiliasi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="formulir2"> 
+    <div class="navbar">
+        <div class="logo">Aplikasi Penilaian ZNT PBB P2</div>
+        <ul>
+            <li><a href="index.html">Input Data</a></li>
+            <li><a href="formulir2.html">Formulir 2</a></li>
+            <li class="active"><a href="formulir3.html">Formulir 3</a></li>
+            <li class="active"><a href="analisis.html">Cari Alamat</a></li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <h2>FORMULIR 3: ANALISIS PENILAIAN ZNT</h2>
+        <h2>Objek/ZNT Dinilai: JALAN GATOT SUBROTO / AA</h2>
+
+        <div class="search-bar">
+            <div class="search-field">
+                <label>Objek yang Dinilai</label>
+                <input type="text" id="objekInput" placeholder="Masukkan alamat objek...">
+            </div>
+            <div class="search-field">
+                <label>Kode ZNT Dinilai</label>
+                <input type="text" id="zntInput" placeholder="Masukkan kode ZNT...">
+            </div>
+            <div class="grade-input-container">
+                <label for="gradeInputJudul">Grade Lokasi</label>
+                <select id="gradeInputJudul">                    
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="data-table" id="analisisDataTable3">
+                <thead>
+                    <tr>
+                        <th rowspan="2">Nomor</th>
+                        <th rowspan="2">Alamat Objek Pajak</th>
+                        <th rowspan="2">Blok/NOP</th>
+                        <th rowspan="2">Kode ZNT</th>
+                        <th rowspan="2">Grade Lokasi</th>
+                        <th rowspan="2">Nilai WAJAR Bumi / M2</th>
+                        <th colspan="4">PENYESUAIAN</th>
+                        <th rowspan="2">NILAI WAJAR Objek/ZNT</th>
+                        <th rowspan="2">NILAI WAJAR Objek ZNT REKONSILIASI</th>
+                    </tr>
+                    <tr>
+                        <th>Lokasi (bakal grade)</th>
+                        <th>BENTUK TANAH (%)</th>
+                        <th>KETINGGIAN DARI JALAN</th>
+                        <th>Kepemilikan</th>
+                    </tr>
+                </thead>
+                <tbody id="analisisTableBody3">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

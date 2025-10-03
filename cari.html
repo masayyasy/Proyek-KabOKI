@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulir 2: Analisis Nilai Pasar Wajar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="cari"> <div class="navbar">
+        <div class="logo">Aplikasi Penilaian ZNT PBB P2</div>
+        <ul>
+            <li><a href="home.html">Input Data</a></li>
+            <li><a href="formulir2.html">Formulir 2</a></li>
+            <li class="active"><a href="formulir3.html">Formulir 3</a></li>
+            <li class="active"><a href="cari.html">Peta Data</a></li>
+        </ul>
+    </div>
+
+        <h1 class="text-3xl mb-4 text-center">Analisis Rekonsiliasi</h1>
+        <hr class="mb-6">
+
+        <h2 class="text-2xl font-bold mb-4">Objek/ZNT Dinilai</h2>
+        <div class="search-container">
+            <label for="searchAlamat" class="font-bold">Cari Alamat:</label>
+            <input type="text" id="searchAlamat" placeholder="Masukkan nama jalan atau alamat..." class="w-full">
+        </div>
+
+        <div class="flex justify-end mb-4">
+            <button id="exportTable4Btn" class="export-btn">
+                <i class="fas fa-file-export mr-2"></i> Ekspor ke CSV
+            </button>
+        </div>
+
+        <div class="table-container">
+            <table class="data-table" id="analisisDataTable4">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Alamat Objek Pajak</th>
+                        <th>Blok/NOP</th>
+                        <th>Kode ZNT</th>
+                        <th>Grade</th>
+                        <th>Harga Wajar/m²</th>
+                        <th>Grade Lokasi (bakal grade)</th>
+                        <th>Bentuk Tanah</th>
+                        <th>Ketinggian</th>
+                        <th>Sertifikat</th>
+                        <th>Rata-rata Harga Wajar/m²</th>
+                    </tr>
+                </thead>
+                <tbody id="analisisTableBody4">
+                    <tr>
+                        <td colspan="11" class="text-center text-gray-500">Silakan masukkan data properti dan tentukan alamat untuk memulai analisis.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>

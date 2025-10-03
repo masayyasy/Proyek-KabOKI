@@ -1,0 +1,672 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f6;
+    color: #333;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+h2 {
+    text-align: center;
+    color: #113862;
+    margin-bottom: 30px;
+}
+
+/* --- Navbar Styling --- */
+.navbar {
+    background-color: #113862;
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar .logo {
+    font-size: 1.8em;
+    font-weight: bold;
+}
+
+.navbar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.navbar ul li {
+    margin-left: 25px;
+}
+
+.navbar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1em;
+    padding: 5px 0;
+    transition: color 0.3s ease;
+}
+
+.navbar ul li a:hover {
+    color: #e0e0e0;
+}
+
+/* --- Content Wrapper for home.html layouts --- */
+.content-wrapper {
+    display: flex;
+    gap: 25px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.input-column {
+    flex: 2;
+    padding: 25px;
+    background-color: #fcfcfc;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+.map-column {
+    flex: 3;
+    padding: 25px;
+    background-color: #fcfcfc;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Form Styling */
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.form-row .input-group {
+    flex: 1 1 calc(50% - 7.5px);
+    margin-bottom: 0;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+    font-size: 0.85em;
+}
+
+.input-group input[type="text"],
+.input-group input[type="number"],
+.input-group input[type="date"],
+.input-group select {
+    width: 100%;
+    padding: 7px 8px;
+    border: 1px solid #ccd0d4;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 0.9em;
+    color: #333;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    border-color: #113862;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+/* Map Specific Styling */
+#map {
+    width: 100%;
+    height: 250px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    margin-top: 15px;
+}
+
+.map-hint {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 0.85em;
+    color: #777;
+    text-align: center;
+}
+
+/* Form Button Styling */
+button[type="submit"] {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 20px;
+    width: 100%;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+}
+
+/* --- Table Styling (Common for both pages) --- */
+.table-container {
+    margin-top: 10px;
+    overflow-x: auto;
+    background-color: #fcfcfc;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    padding: 20px;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    table-layout: fixed;
+}
+
+.data-table th,
+.data-table td {
+    border: 1px solid #e9ecef;
+    padding: 4px 5px;
+    text-align: left;
+    white-space: normal;
+    word-wrap: break-word;
+    font-size: 0.65em;
+    line-height: 1.3;
+    vertical-align: top;
+}
+
+.data-table th {
+    background-color: #113862;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.data-table tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+.data-table tbody tr:hover {
+    background-color: #e2f0ff;
+}
+
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    justify-content: center;
+}
+
+.action-buttons button {
+    padding: 3px 5px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.6em;
+    font-weight: bold;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.action-buttons .edit-btn {
+    background-color: #ffc107;
+    color: #333;
+}
+.action-buttons .edit-btn:hover {
+    background-color: #e0a800;
+    transform: translateY(-1px);
+}
+
+.action-buttons .delete-btn {
+    background-color: #dc3545;
+    color: white;
+}
+.action-buttons .delete-btn:hover {
+    background-color: #c82333;
+    transform: translateY(-1px);
+}
+
+/* --- New Reference Table Styling (home.html specific) --- */
+.reference-table-container {
+    margin-top: 15px;
+    width: 100%;
+}
+
+.reference-table-container h3 {
+    margin-bottom: 5px;
+    text-align: center;
+    color: #555;
+    font-size: 0.9em;
+}
+
+#dataReferensiTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#dataReferensiTable th,
+#dataReferensiTable td {
+    border: 1px solid #e0e0e0;
+    padding: 5px 8px;
+    text-align: left;
+    font-size: 0.7em;
+    vertical-align: middle;
+}
+
+#dataReferensiTable th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+}
+
+#dataReferensiTable td:nth-child(1) { width: 30px; text-align: center; }
+#dataReferensiTable td:nth-child(2) { width: 60%; }
+#dataReferensiTable td:nth-child(3) { width: 25%; }
+
+#dataReferensiTable input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 3px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 0.8em;
+}
+
+/* Specific column widths for Formulir 2 */
+body.formulir2 .data-table th:nth-child(1) { width: 30px; }
+body.formulir2 .data-table th:nth-child(2) { width: 150px; }
+body.formulir2 .data-table th:nth-child(3) { width: 70px; }
+body.formulir2 .data-table th:nth-child(4) { width: 60px; }
+
+/* Kolom di baris header kedua untuk Formulir 2 */
+body.formulir2 .data-table thead tr:nth-child(2) th:nth-child(1) { width: 70px; }
+body.formulir2 .data-table thead tr:nth-child(2) th:nth-child(2) { width: 80px; }
+body.formulir2 .data-table thead tr:nth-child(2) th:nth-child(3) { width: 100px; }
+body.formulir2 .data-table thead tr:nth-child(2) th:nth-child(4) { width: 80px; }
+body.formulir2 .data-table th:nth-child(9) { width: 110px; }
+body.formulir2 .data-table thead tr:nth-child(2) th:nth-child(5) { width: 110px; }
+body.formulir2 .data-table thead tr:nth-child(2) th:nth-child(6) { width: 60px; }
+body.formulir2 .data-table thead tr:nth-child(2) th:nth-child(7) { width: 90px; }
+body.formulir2 .data-table thead tr:nth-child(2) th:nth-child(8) { width: 120px; }
+body.formulir2 .data-table thead tr:nth-child(2) th:nth-child(9) { width: 80px; }
+
+/* Kolom di baris header pertama yang tidak punya colspan untuk Formulir 2 */
+body.formulir2 .data-table th:nth-child(15) { width: 100px; }
+body.formulir2 .data-table th:nth-child(16) { width: 90px; }
+body.formulir2 .data-table th:nth-child(17) { width: 90px; }
+body.formulir2 .data-table th:nth-child(18) { width: 110px; }
+body.formulir2 .data-table th:nth-child(19) { width: 110px; }
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .content-wrapper {
+        flex-direction: column;
+    }
+    .form-row .input-group {
+        flex: 1 1 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 20px;
+    }
+    .navbar ul {
+        margin-top: 10px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .navbar ul li {
+        margin-left: 0;
+        margin-bottom: 5px;
+    }
+}
+
+
+/* --- New Search Bar Styling (untuk formulir 3) --- */
+.search-bar {
+    display: flex; /* Mengatur layout dengan flexbox */
+    align-items: flex-start; /* Menjaga label di bagian atas */
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 15px 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Memberikan bayangan halus */
+    gap: 20px; /* Jarak antar kolom input */
+    margin-bottom: 20px;
+}
+
+.search-field {
+    flex: 1; /* Membuat setiap kolom mengambil ruang yang sama */
+    display: flex;
+    flex-direction: column;
+}
+
+.search-field label {
+    font-size: 14px;
+    color: #7f8c8d;
+    margin-bottom: 5px;
+    font-weight: normal;
+}
+
+.search-field input[type="text"],
+.search-field select {
+    width: 100%;
+    padding: 8px 0; /* Padding vertikal yang lebih sedikit */
+    border: none;
+    background-color: transparent;
+    font-size: 16px;
+    color: #333;
+    outline: none;
+    -webkit-appearance: none; /* Menghilangkan styling default browser untuk select */
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.search-field input:focus,
+.search-field select:focus {
+    box-shadow: none; /* Menghilangkan bayangan saat fokus */
+    border-color: transparent;
+}
+
+/* Mengatur dropdown agar tidak ada panah default */
+.search-field select {
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%237f8c8d" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right center;
+    padding-right: 25px;
+}
+
+/* Responsive design untuk layar kecil */
+@media (max-width: 768px) {
+    .search-bar {
+        flex-direction: column; /* Mengubah menjadi kolom untuk layar kecil */
+        align-items: stretch;
+    }
+    
+    .search-field {
+        margin-bottom: 15px; /* Menambah jarak antar input */
+    }
+}
+
+/* --- New Search Page Styles --- */
+.search-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 80px);
+    max-width: none;
+    background-color: #f4f7f6;
+    box-shadow: none;
+}
+
+.search-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 90%;
+    max-width: 400px;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccd0d4;
+    border-radius: 6px;
+    box-sizing: border-box;
+    background-color: white;
+    font-size: 1em;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.search-input:focus {
+    border-color: #113862;
+    box-shadow: 0 0 0 3px rgba(17, 56, 98, 0.25);
+    outline: none;
+}
+
+.search-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #113862;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.search-button:hover {
+    background-color: #0c2642;
+    transform: translateY(-2px);
+}
+
+/* --- Datamaps.html Specific Styles --- */
+.datamaps-container {
+    width: 100%;
+    height: calc(100vh - 80px);
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+#fullpageMap {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Marker kustom untuk Leaflet */
+.leaflet-div-icon {
+    background: transparent;
+    border: none;
+}
+.leaflet-div-icon div {
+    background-color: #007bff;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transform: translate(-10px, -10px);
+}
+
+/* --- Export Buttons --- */
+.export-btn-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.export-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.export-btn:hover {
+    background-color: #45a049;
+}
+
+/* --- Custom Modal Styles --- */
+.fixed {
+    position: fixed;
+}
+.inset-0 {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+.bg-gray-600 {
+    background-color: #4a5568;
+}
+.bg-opacity-50 {
+    opacity: 0.5;
+}
+.overflow-y-auto {
+    overflow-y: auto;
+}
+.h-full {
+    height: 100%;
+}
+.w-full {
+    width: 100%;
+}
+.flex {
+    display: flex;
+}
+.items-center {
+    align-items: center;
+}
+.justify-center {
+    justify-content: center;
+}
+.bg-white {
+    background-color: #fff;
+}
+.p-6 {
+    padding: 1.5rem;
+}
+.rounded-lg {
+    border-radius: 0.5rem;
+}
+.shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+.max-w-sm {
+    max-width: 24rem;
+}
+.mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+.text-gray-800 {
+    color: #2d3748;
+}
+.text-lg {
+    font-size: 1.125rem;
+}
+.mb-4 {
+    margin-bottom: 1rem;
+}
+.space-x-2 > * + * {
+    margin-left: 0.5rem;
+}
+.px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+.py-2 {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+.bg-gray-200 {
+    background-color: #edf2f7;
+}
+.text-gray-800 {
+    color: #2d3748;
+}
+.hover\:bg-gray-300:hover {
+    background-color: #e2e8f0;
+}
+.transition {
+    transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+}
+.duration-300 {
+    transition-duration: 0.3s;
+}
+.bg-red-500 {
+    background-color: #f56565;
+}
+.text-white {
+    color: #fff;
+}
+.hover\:bg-red-600:hover {
+    background-color: #e53e3e;
+}
+
+.form-sections {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-card {
+  flex: 1;
+  background: #f9fafb;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.form-card h3 {
+  margin-bottom: 15px;
+  font-size: 18px;
+  color: #333;
+}
+
+.form-field {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field label {
+  margin-bottom: 5px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.form-field input, 
+.form-field select {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.button-container {
+  margin-bottom: 20px;
+  text-align: center;
+}
