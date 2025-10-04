@@ -170,6 +170,12 @@ function renderPropertiTable() {
     row.insertCell().textContent = new Intl.NumberFormat("id-ID").format(data.nilaiDBKB);
     row.insertCell().textContent = data.grade;
     row.insertCell().textContent = data.koordinat;
+
+    const aksiCell = row.insertCell();
+  aksiCell.innerHTML = `
+    <button class="edit-btn" onclick="editProperti('${data.id}')">Edit</button>
+    <button class="delete-btn" onclick="deleteProperti('${data.id}')">Hapus</button>
+  `;
   });
 }
 
@@ -658,6 +664,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 });
+
 
 
 
