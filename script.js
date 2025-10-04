@@ -20,7 +20,7 @@ const analisisTable3 = document.getElementById("analisisDataTable3");
 let propertis = JSON.parse(localStorage.getItem("propertiData")) || [];
 let dataReferensi = JSON.parse(localStorage.getItem("dataReferensi")) || {};
 
-const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyU3TkNWtXvyVynt6YSlMgQTJI3TESCMd2KxQIYCE-bWjdAaZpFe2iW2EbyW_4z1TZw3g/exec";
+const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxZcs2Ev2ByyHOgnLpjjHJ81kEJL0DfsbhM6K0o5etZV4ROZwV3K7yTkljQy4AOXaeQCg/exec";
 
 // === Sync ke Google Sheets ===
 function syncToGoogleSheets(data) {
@@ -656,6 +656,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 });
+
 
 
 
