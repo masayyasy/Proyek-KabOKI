@@ -20,7 +20,7 @@ const analisisTable3 = document.getElementById("analisisDataTable3");
 let propertis = JSON.parse(localStorage.getItem("propertiData")) || [];
 let dataReferensi = JSON.parse(localStorage.getItem("dataReferensi")) || {};
 
-const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxZcs2Ev2ByyHOgnLpjjHJ81kEJL0DfsbhM6K0o5etZV4ROZwV3K7yTkljQy4AOXaeQCg/exec";
+const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbym8xn21dZZpGX3AMCbpUXLULoMFkjIx_VIzL-7_OyxIEim0BomWXcBeQfejDRk1b7f6Q/exec";
 
 // === Sync ke Google Sheets ===
 function syncToGoogleSheets(data) {
@@ -35,15 +35,17 @@ function syncToGoogleSheets(data) {
 
 // === Load dari Google Sheets ===
 function loadFromGoogleSheets() {
-  fetch(GOOGLE_APPS_SCRIPT_URL, { method: "GET" })
-    .then(res => res.json())
-    .then(data => {
-      localStorage.setItem("propertiData", JSON.stringify(data));
-      propertis = data;
-      renderPropertiTable();
-    })
-    .catch(err => console.error("Gagal ambil data dari Google Sheets:", err));
+    fetch(GOOGLE_APPS_SCRIPT_URL)
+        .then(res => res.json())
+        .then(data => {
+            console.log("Data dari Google Sheets:", data);
+            localStorage.setItem('propertiData', JSON.stringify(data));
+            propertis = data;
+            renderPropertiTable();
+        })
+        .catch(err => console.error("Gagal ambil data dari Google Sheets:", err));
 }
+
 
 // === Utility ===
 function generateUUID() {
@@ -656,6 +658,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 });
+
 
 
 
