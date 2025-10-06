@@ -259,7 +259,10 @@ function editProperti(id) {
         document.getElementById("kodeZNT").value = propertiToEdit.kodeZNT;
         document.getElementById("sumber").value = propertiToEdit.sumber;
         document.getElementById("jenis").value = propertiToEdit.jenis;
-        document.getElementById("tanggal").value = propertiToEdit.tanggal;
+        if (propertiToEdit.tanggal) {
+  const tanggal = new Date(propertiToEdit.tanggal);
+  document.getElementById("tanggal").value = tanggal.toISOString().split('T')[0];
+}
         document.getElementById("hargaTransaksi").value = propertiToEdit.hargaTransaksi;
         document.getElementById("jenisPenggunaan").value = propertiToEdit.jenisPenggunaan;
         document.getElementById("luas").value = propertiToEdit.luas;
@@ -726,6 +729,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 });
+
 
 
 
