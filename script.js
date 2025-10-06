@@ -18,7 +18,7 @@ let propertis = JSON.parse(localStorage.getItem("propertiData")) || [];
 let dataReferensi = JSON.parse(localStorage.getItem("dataReferensi")) || {};
 let editModeId = null;
 
-const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbym8xn21dZZpGX3AMCbpUXLULoMFkjIx_VIzL-7_OyxIEim0BomWXcBeQfejDRk1b7f6Q/exec";
+const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw41V7xOOeAGZpp2S3jqN0PGhYOvYm0JbgKhNf0QPb93EhQzy3Fv4WXNFCCelGQaQFLZw/exec";
 
 // === Google Sheets Sync ===
 function syncToGoogleSheets(data) {
@@ -597,6 +597,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 });
+
 
 
 
