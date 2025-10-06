@@ -11,7 +11,7 @@ const referenceInputs = referenceTable ? referenceTable.querySelectorAll('input'
 const exportHomeTableBtn = document.getElementById('exportHomeTableBtn');
 const exportTable2Btn = document.getElementById('exportTable2Btn');
 const exportTable3Btn = document.getElementById('exportTable3Btn');
-const nilaiDBKBInput = document.getElementById("Nilai dbkb");
+const nilaiDBKBInput = document.getElementById("nilaiDBKB");
 const noResultsText = document.getElementById('noResultsText');
 
 // Elemen untuk formulir3.html
@@ -24,7 +24,7 @@ let propertis = JSON.parse(localStorage.getItem('propertiData')) || [];
 let dataReferensi = JSON.parse(localStorage.getItem('dataReferensi')) || {};
 
 // URL Web App Google Apps Script
-const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwKbQJvq33hu4Zne8F2aXWB4HzJbEDSqdQVYtW5baFNfLfJYGbPlBZ4bOOBPR6-TcrtvQ/exec"; // ganti dengan URL Web App kamu
+const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwrhFEdWIV7Yq41eoDHkKKeIS-Z36j6MuBJ2yzVUZLHsCYMJndyFWXJgjEkpGp2vM6L1g/exec"; // ganti dengan URL Web App kamu
 
 // Fungsi untuk kirim data ke Google Sheets
 function syncToGoogleSheets(data) {
@@ -123,6 +123,7 @@ if (propertiForm) {
         let newProperti = null;
 
         if (editModeId) {
+            // 🔹 EDIT DATA
             const propertiIndex = propertis.findIndex(p => p.id === editModeId);
             if (propertiIndex > -1) {
                 newProperti = {
@@ -147,9 +148,21 @@ if (propertiForm) {
                     koordinat: document.getElementById("koordinat").value,
                 };
                 propertis[propertiIndex] = newProperti;
+
+                // 🔹 Kirim update ke Google Sheets
+                fetch(GOOGLE_APPS_SCRIPT_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ ...newProperti, action: "update" })
+                })
+                .then(res => res.text())
+                .then(txt => console.log("Respon update:", txt))
+                .catch(err => console.error("Gagal update ke Google Sheets:", err));
             }
             editModeId = null;
+
         } else {
+            // 🔹 TAMBAH DATA BARU
             newProperti = {
                 id: generateUUID(),
                 alamatObjekPajak: document.getElementById("alamatObjekPajak").value,
@@ -172,13 +185,13 @@ if (propertiForm) {
                 koordinat: document.getElementById("koordinat").value,
             };
             propertis.push(newProperti);
+
+            // 🔹 Kirim tambah ke Google Sheets
+            syncToGoogleSheets(newProperti);
         }
 
         // simpan ke localStorage
         localStorage.setItem('propertiData', JSON.stringify(propertis));
-
-        // sync ke Google Sheets
-        if (newProperti) syncToGoogleSheets(newProperti);
 
         // render ulang tabel
         renderPropertiTable();
@@ -713,4 +726,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 });
-
