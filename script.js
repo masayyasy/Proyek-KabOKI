@@ -59,16 +59,20 @@ function syncDeleteToGoogleSheets(id) {
 }
 
 function loadFromGoogleSheets() {
+  console.log("🔄 Mengambil data dari Google Sheets...");
   fetch(GOOGLE_APPS_SCRIPT_URL)
-    .then(res => res.json())
-    .then(data => {
-      console.log("Data dari Google Sheets:", data);
+    .then(res => res.text())
+    .then(txt => {
+      console.log("📦 Respons mentah:", txt);
+      const data = JSON.parse(txt);
+      console.log("✅ Data parsed:", data);
       propertis = data;
       localStorage.setItem("propertiData", JSON.stringify(data));
       renderPropertiTable();
     })
-    .catch(err => console.error("Gagal ambil data dari Google Sheets:", err));
+    .catch(err => console.error("❌ Gagal ambil data dari Google Sheets:", err));
 }
+
 
 // === Utility ===
 function generateUUID() {
@@ -597,6 +601,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 });
+
 
 
 
