@@ -146,24 +146,6 @@ if (propertiForm) {
     renderPropertiTable();
   });
 }
-
-    renderPropertiTable();
-    propertiForm.reset();
-    if (marker) { map.removeLayer(marker); marker = null; }
-    koordinatInput.value = "";
-  });
-}
-
-
-    localStorage.setItem("propertiData", JSON.stringify(propertis));
-    if (newProperti) syncToGoogleSheets(newProperti);
-    renderPropertiTable();
-    propertiForm.reset();
-    if (marker) { map.removeLayer(marker); marker = null; }
-    koordinatInput.value = "";
-  });
-}
-
 // === Render Table ===
 function renderPropertiTable() {
   if (!propertiTableBody) return;
@@ -689,6 +671,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 });
+
 
 
 
