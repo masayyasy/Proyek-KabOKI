@@ -557,6 +557,14 @@ function exportTableToCSV(tableId, filename) {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 }
+// === Placeholder untuk data referensi (supaya tidak error) ===
+function loadReferenceData() {
+  console.log("ℹ️ loadReferenceData() belum diimplementasikan — dilewati.");
+}
+
+function saveReferenceData() {
+  console.log("ℹ️ saveReferenceData() belum diimplementasikan — dilewati.");
+}
 
 
 // --- Initialization on Page Load ---
@@ -601,6 +609,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 });
+
 
 
 
