@@ -33,6 +33,21 @@ function syncToGoogleSheets(data) {
   .catch(err => console.error("Gagal sync ke Google Sheets:", err));
 }
 
+// Fungsi untuk update data di Google Sheets
+function syncUpdateToGoogleSheets(data) {
+    fetch(GOOGLE_APPS_SCRIPT_URL + "?action=update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.text())
+    .then(txt => {
+        console.log("Respon update dari server:", txt);
+        loadFromGoogleSheets(); // Refresh data dari Sheets
+    })
+    .catch(err => console.error("Gagal update ke Google Sheets:", err));
+}
+
 // === Load dari Google Sheets ===
 function loadFromGoogleSheets() {
     fetch(GOOGLE_APPS_SCRIPT_URL)
@@ -75,62 +90,70 @@ function onMapClick(e) {
 }
 
 // === Form Handling ===
-let editModeId = null;
 if (propertiForm) {
   propertiForm.addEventListener("submit", function (event) {
     event.preventDefault();
 
-    let newProperti = null;
+    const formData = {
+      alamatObjekPajak: document.getElementById("alamatObjekPajak").value,
+      blokNop: document.getElementById("blokNop").value,
+      kodeZNT: document.getElementById("kodeZNT").value,
+      sumber: document.getElementById("sumber").value,
+      jenis: document.getElementById("jenis").value,
+      tanggal: document.getElementById("tanggal").value,
+      hargaTransaksi: parseFloat(document.getElementById("hargaTransaksi").value) || 0,
+      jenisPenggunaan: document.getElementById("jenisPenggunaan").value,
+      luas: parseFloat(document.getElementById("luas").value) || 0,
+      lebarSisiDepan: parseFloat(document.getElementById("lebarSisiDepan").value) || 0,
+      ketinggianDariJalan: parseFloat(document.getElementById("ketinggianDariJalan").value) || 0,
+      bentukTanah: document.getElementById("bentukTanah").value,
+      dataKepemilikan: document.getElementById("dataKepemilikan").value,
+      namaPemilik: document.getElementById("namaPemilik").value,
+      luasBangunan: parseFloat(document.getElementById("luasBangunan").value) || 0,
+      nilaiDBKB: parseFloat(document.getElementById("nilaiDBKB").value) || 0,
+      grade: document.getElementById("grade").value,
+      koordinat: document.getElementById("koordinat").value,
+    };
+
     if (editModeId) {
-      const idx = propertis.findIndex((p) => p.id === editModeId);
+      // === MODE EDIT ===
+      const idx = propertis.findIndex(p => p.id === editModeId);
       if (idx > -1) {
-        newProperti = { ...propertis[idx],
-          alamatObjekPajak: document.getElementById("alamatObjekPajak").value,
-          blokNop: document.getElementById("blokNop").value,
-          kodeZNT: document.getElementById("kodeZNT").value,
-          sumber: document.getElementById("sumber").value,
-          jenis: document.getElementById("jenis").value,
-          tanggal: document.getElementById("tanggal").value,
-          hargaTransaksi: parseFloat(document.getElementById("hargaTransaksi").value),
-          jenisPenggunaan: document.getElementById("jenisPenggunaan").value,
-          luas: parseFloat(document.getElementById("luas").value),
-          lebarSisiDepan: parseFloat(document.getElementById("lebarSisiDepan").value),
-          ketinggianDariJalan: parseFloat(document.getElementById("ketinggianDariJalan").value) || 0,
-          bentukTanah: document.getElementById("bentukTanah").value,
-          dataKepemilikan: document.getElementById("dataKepemilikan").value,
-          namaPemilik: document.getElementById("namaPemilik").value,
-          luasBangunan: parseFloat(document.getElementById("luasBangunan").value) || 0,
-          nilaiDBKB: parseFloat(nilaiDBKBInput.value) || 0,
-          grade: document.getElementById("grade").value,
-          koordinat: document.getElementById("koordinat").value,
-        };
-        propertis[idx] = newProperti;
+        // gabungkan data lama dengan data baru
+        propertis[idx] = { ...propertis[idx], ...formData };
+        localStorage.setItem("propertiData", JSON.stringify(propertis));
+
+        // kirim data update ke Google Sheets
+        syncEditToGoogleSheets(propertis[idx]);
+
+        alert("✅ Data berhasil diperbarui!");
       }
       editModeId = null;
     } else {
-      newProperti = {
-        id: generateUUID(),
-        alamatObjekPajak: document.getElementById("alamatObjekPajak").value,
-        blokNop: document.getElementById("blokNop").value,
-        kodeZNT: document.getElementById("kodeZNT").value,
-        sumber: document.getElementById("sumber").value,
-        jenis: document.getElementById("jenis").value,
-        tanggal: document.getElementById("tanggal").value,
-        hargaTransaksi: parseFloat(document.getElementById("hargaTransaksi").value),
-        jenisPenggunaan: document.getElementById("jenisPenggunaan").value,
-        luas: parseFloat(document.getElementById("luas").value),
-        lebarSisiDepan: parseFloat(document.getElementById("lebarSisiDepan").value),
-        ketinggianDariJalan: parseFloat(document.getElementById("ketinggianDariJalan").value) || 0,
-        bentukTanah: document.getElementById("bentukTanah").value,
-        dataKepemilikan: document.getElementById("dataKepemilikan").value,
-        namaPemilik: document.getElementById("namaPemilik").value,
-        luasBangunan: parseFloat(document.getElementById("luasBangunan").value) || 0,
-        nilaiDBKB: parseFloat(nilaiDBKBInput.value) || 0,
-        grade: document.getElementById("grade").value,
-        koordinat: document.getElementById("koordinat").value,
-      };
+      // === MODE TAMBAH BARU ===
+      const newProperti = { id: generateUUID(), ...formData };
       propertis.push(newProperti);
+      localStorage.setItem("propertiData", JSON.stringify(propertis));
+
+      // kirim data baru ke Google Sheets
+      syncToGoogleSheets(newProperti);
+
+      alert("✅ Data baru berhasil ditambahkan!");
     }
+
+    // reset form + refresh tabel
+    propertiForm.reset();
+    renderPropertiTable();
+  });
+}
+
+    renderPropertiTable();
+    propertiForm.reset();
+    if (marker) { map.removeLayer(marker); marker = null; }
+    koordinatInput.value = "";
+  });
+}
+
 
     localStorage.setItem("propertiData", JSON.stringify(propertis));
     if (newProperti) syncToGoogleSheets(newProperti);
@@ -190,38 +213,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // --- Edit/Delete Functions (home.html specific) ---
 function editProperti(id) {
-    const propertiToEdit = propertis.find(p => p.id === id);
-    if (propertiToEdit) {
-        document.getElementById("alamatObjekPajak").value = propertiToEdit.alamatObjekPajak;
-        document.getElementById("blokNop").value = propertiToEdit.blokNop;
-        document.getElementById("kodeZNT").value = propertiToEdit.kodeZNT;
-        document.getElementById("sumber").value = propertiToEdit.sumber;
-        document.getElementById("jenis").value = propertiToEdit.jenis;
-        document.getElementById("tanggal").value = propertiToEdit.tanggal;
-        document.getElementById("hargaTransaksi").value = propertiToEdit.hargaTransaksi;
-        document.getElementById("jenisPenggunaan").value = propertiToEdit.jenisPenggunaan;
-        document.getElementById("luas").value = propertiToEdit.luas;
-        document.getElementById("lebarSisiDepan").value = propertiToEdit.lebarSisiDepan;
-        document.getElementById("ketinggianDariJalan").value = propertiToEdit.ketinggianDariJalan;
-        document.getElementById("bentukTanah").value = propertiToEdit.bentukTanah;
-        document.getElementById("dataKepemilikan").value = propertiToEdit.dataKepemilikan;
-        document.getElementById("namaPemilik").value = propertiToEdit.namaPemilik;
-        document.getElementById("luasBangunan").value = propertiToEdit.luasBangunan;
-        nilaiDBKBInput.value = propertiToEdit.nilaiDBKB;
-        document.getElementById("grade").value = propertiToEdit.grade;
-        document.getElementById("koordinat").value = propertiToEdit.koordinat;
-        editModeId = id;
+  const propertiToEdit = propertis.find(p => p.id === id);
+  if (!propertiToEdit) return;
 
-        if (propertiToEdit.koordinat && map) {
-            const [lat, lng] = propertiToEdit.koordinat.split(', ').map(Number);
-            if (!isNaN(lat) && !isNaN(lng)) {
-                map.setView([lat, lng], 16);
-                if (marker) map.removeLayer(marker);
-                marker = L.marker([lat, lng]).addTo(map);
-            }
-        }
+  editModeId = id; // mode edit aktif
+
+  document.getElementById("alamatObjekPajak").value = propertiToEdit.alamatObjekPajak;
+  document.getElementById("blokNop").value = propertiToEdit.blokNop;
+  document.getElementById("kodeZNT").value = propertiToEdit.kodeZNT;
+  document.getElementById("sumber").value = propertiToEdit.sumber;
+  document.getElementById("jenis").value = propertiToEdit.jenis;
+  document.getElementById("tanggal").value = propertiToEdit.tanggal;
+  document.getElementById("hargaTransaksi").value = propertiToEdit.hargaTransaksi;
+  document.getElementById("jenisPenggunaan").value = propertiToEdit.jenisPenggunaan;
+  document.getElementById("luas").value = propertiToEdit.luas;
+  document.getElementById("lebarSisiDepan").value = propertiToEdit.lebarSisiDepan;
+  document.getElementById("ketinggianDariJalan").value = propertiToEdit.ketinggianDariJalan;
+  document.getElementById("bentukTanah").value = propertiToEdit.bentukTanah;
+  document.getElementById("dataKepemilikan").value = propertiToEdit.dataKepemilikan;
+  document.getElementById("namaPemilik").value = propertiToEdit.namaPemilik;
+  document.getElementById("luasBangunan").value = propertiToEdit.luasBangunan;
+  nilaiDBKBInput.value = propertiToEdit.nilaiDBKB;
+  document.getElementById("grade").value = propertiToEdit.grade;
+  document.getElementById("koordinat").value = propertiToEdit.koordinat;
+
+  if (propertiToEdit.koordinat && map) {
+    const [lat, lng] = propertiToEdit.koordinat.split(', ').map(Number);
+    if (!isNaN(lat) && !isNaN(lng)) {
+      map.setView([lat, lng], 16);
+      if (marker) map.removeLayer(marker);
+      marker = L.marker([lat, lng]).addTo(map);
     }
+  }
 }
+
 
 // --- Edit/Delete Functions (home.html specific) ---
 
@@ -664,6 +689,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 });
+
 
 
 
