@@ -125,15 +125,16 @@ if (propertiForm) {
     };
 
     if (editModeId) {
-      const idx = propertis.findIndex(p => p.id === editModeId);
-      if (idx > -1) {
-        propertis[idx] = { ...propertis[idx], ...formData };
-        localStorage.setItem("propertiData", JSON.stringify(propertis));
-        syncUpdateToGoogleSheets(propertis[idx]);
-        alert("✅ Data berhasil diperbarui!");
-      }
-      editModeId = null;
-    } else {
+  const idx = propertis.findIndex(p => p.id === editModeId);
+  if (idx > -1) {
+    propertis[idx] = { ...propertis[idx], ...formData };
+    localStorage.setItem("propertiData", JSON.stringify(propertis));
+    syncUpdateToGoogleSheets(propertis[idx]);
+    alert("✅ Data berhasil diperbarui!");
+  }
+  setTimeout(() => { editModeId = null; }, 500);
+}
+ else {
       const newProperti = { id: generateUUID(), ...formData };
       propertis.push(newProperti);
       localStorage.setItem("propertiData", JSON.stringify(propertis));
@@ -247,15 +248,6 @@ function populateGradeDropdown() {
     gradeSelect.appendChild(option);
   }
 }
-
-// === Inisialisasi ===
-document.addEventListener("DOMContentLoaded", () => {
-  if (propertiForm) {
-    populateGradeDropdown();
-    initializeMap();
-    loadFromGoogleSheets();
-  }
-});
 
 
 // =========================================================================
@@ -605,6 +597,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 });
+
 
 
 
