@@ -24,7 +24,7 @@ let propertis = JSON.parse(localStorage.getItem('propertiData')) || [];
 let dataReferensi = JSON.parse(localStorage.getItem('dataReferensi')) || {};
 
 // URL Web App Google Apps Script
-const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbweD_-dnhWJKYr7FBb4LiVsGDIEaJhdrcrza2SoMyWkw_hgky0fRnF-0oLUySNDRgOTqA/exec"; // ganti dengan URL Web App kamu
+const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwdF3aJJIzgz1f-7k6mSg2d08IvDhpx_ssPTV2s7hRSB0wtfyrxRYQO0y4T7xYcufk1KQ/exec"; // ganti dengan URL Web App kamu
 
 // Fungsi untuk kirim data ke Google Sheets
 function syncToGoogleSheets(data) {
@@ -729,6 +729,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 });
+
 
 
 
