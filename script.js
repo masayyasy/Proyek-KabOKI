@@ -1,71 +1,79 @@
-// --- DOM Elements (shared & page-specific) ---
+// === DOM Elements ===
 const propertiForm = document.getElementById("propertiForm");
 const propertiTableBody = document.getElementById("propertiTableBody");
-const propertiDataTable = document.getElementById("propertiDataTable");
 const koordinatInput = document.getElementById("koordinat");
 const mapElement = document.getElementById("map");
 const gradeSelect = document.getElementById("grade");
-const referenceTable = document.getElementById("dataReferensiTable");
-const referenceInputs = referenceTable ? referenceTable.querySelectorAll("input") : [];
+const nilaiDBKBInput = document.getElementById("nilaiDBKB");
 const exportHomeTableBtn = document.getElementById("exportHomeTableBtn");
 const exportTable2Btn = document.getElementById("exportTable2Btn");
 const exportTable3Btn = document.getElementById("exportTable3Btn");
-const nilaiDBKBInput = document.getElementById("Nilai dbkb");
-const noResultsText = document.getElementById("noResultsText");
-
 const gradeInputJudul = document.getElementById("gradeInputJudul");
 const analisisTableBody3 = document.getElementById("analisisTableBody3");
 const analisisTable3 = document.getElementById("analisisDataTable3");
+const referenceTable = document.getElementById("dataReferensiTable");
+const referenceInputs = referenceTable ? referenceTable.querySelectorAll("input") : [];
 
 let propertis = JSON.parse(localStorage.getItem("propertiData")) || [];
 let dataReferensi = JSON.parse(localStorage.getItem("dataReferensi")) || {};
+let editModeId = null;
 
 const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbym8xn21dZZpGX3AMCbpUXLULoMFkjIx_VIzL-7_OyxIEim0BomWXcBeQfejDRk1b7f6Q/exec";
 
-// === Sync ke Google Sheets ===
+// === Google Sheets Sync ===
 function syncToGoogleSheets(data) {
   fetch(GOOGLE_APPS_SCRIPT_URL, {
     method: "POST",
-    mode: "no-cors", // biar ga error CORS, tapi data tetap masuk
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  }).catch(err => console.error("Gagal sync ke Google Sheets:", err));
+}
+
+function syncUpdateToGoogleSheets(data) {
+  fetch(GOOGLE_APPS_SCRIPT_URL + "?action=update", {
+    method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   })
-  .catch(err => console.error("Gagal sync ke Google Sheets:", err));
-}
-
-// Fungsi untuk update data di Google Sheets
-function syncUpdateToGoogleSheets(data) {
-    fetch(GOOGLE_APPS_SCRIPT_URL + "?action=update", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-    })
     .then(res => res.text())
     .then(txt => {
-        console.log("Respon update dari server:", txt);
-        loadFromGoogleSheets(); // Refresh data dari Sheets
+      console.log("Respon update:", txt);
+      loadFromGoogleSheets();
     })
     .catch(err => console.error("Gagal update ke Google Sheets:", err));
 }
 
-// === Load dari Google Sheets ===
-function loadFromGoogleSheets() {
-    fetch(GOOGLE_APPS_SCRIPT_URL)
-        .then(res => res.json())
-        .then(data => {
-            console.log("Data dari Google Sheets:", data);
-            localStorage.setItem('propertiData', JSON.stringify(data));
-            propertis = data;
-            renderPropertiTable();
-        })
-        .catch(err => console.error("Gagal ambil data dari Google Sheets:", err));
+function syncDeleteToGoogleSheets(id) {
+  fetch(GOOGLE_APPS_SCRIPT_URL + "?action=delete&id=" + id, { method: "GET" })
+    .then(res => res.text())
+    .then(txt => {
+      console.log("Respon hapus:", txt);
+      loadFromGoogleSheets();
+    })
+    .catch(err => {
+      console.error("Gagal hapus dari Google Sheets:", err);
+      loadFromGoogleSheets();
+      createModal("Gagal menghapus data dari server. Silakan coba lagi.", () => {});
+    });
 }
 
+function loadFromGoogleSheets() {
+  fetch(GOOGLE_APPS_SCRIPT_URL)
+    .then(res => res.json())
+    .then(data => {
+      console.log("Data dari Google Sheets:", data);
+      propertis = data;
+      localStorage.setItem("propertiData", JSON.stringify(data));
+      renderPropertiTable();
+    })
+    .catch(err => console.error("Gagal ambil data dari Google Sheets:", err));
+}
 
 // === Utility ===
 function generateUUID() {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
-    var r = (Math.random() * 16) | 0,
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
+    const r = (Math.random() * 16) | 0,
       v = c === "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
@@ -83,13 +91,14 @@ function initializeMap() {
     map.invalidateSize();
   }
 }
+
 function onMapClick(e) {
   if (marker) map.removeLayer(marker);
   marker = L.marker(e.latlng).addTo(map);
   koordinatInput.value = `${e.latlng.lat.toFixed(6)}, ${e.latlng.lng.toFixed(6)}`;
 }
 
-// === Form Handling ===
+// === CRUD ===
 if (propertiForm) {
   propertiForm.addEventListener("submit", function (event) {
     event.preventDefault();
@@ -116,44 +125,37 @@ if (propertiForm) {
     };
 
     if (editModeId) {
-      // === MODE EDIT ===
       const idx = propertis.findIndex(p => p.id === editModeId);
       if (idx > -1) {
-        // gabungkan data lama dengan data baru
         propertis[idx] = { ...propertis[idx], ...formData };
         localStorage.setItem("propertiData", JSON.stringify(propertis));
-
-        // kirim data update ke Google Sheets
-        syncEditToGoogleSheets(propertis[idx]);
-
+        syncUpdateToGoogleSheets(propertis[idx]);
         alert("✅ Data berhasil diperbarui!");
       }
       editModeId = null;
     } else {
-      // === MODE TAMBAH BARU ===
       const newProperti = { id: generateUUID(), ...formData };
       propertis.push(newProperti);
       localStorage.setItem("propertiData", JSON.stringify(propertis));
-
-      // kirim data baru ke Google Sheets
       syncToGoogleSheets(newProperti);
-
       alert("✅ Data baru berhasil ditambahkan!");
     }
 
-    // reset form + refresh tabel
     propertiForm.reset();
     renderPropertiTable();
   });
 }
+
 // === Render Table ===
 function renderPropertiTable() {
   if (!propertiTableBody) return;
   propertiTableBody.innerHTML = "";
+
   if (propertis.length === 0) {
     propertiTableBody.innerHTML = '<tr><td colspan="19">Belum ada data properti.</td></tr>';
     return;
   }
+
   propertis.forEach((data, i) => {
     const row = propertiTableBody.insertRow();
     row.insertCell().textContent = i + 1;
@@ -175,52 +177,29 @@ function renderPropertiTable() {
     row.insertCell().textContent = new Intl.NumberFormat("id-ID").format(data.nilaiDBKB);
     row.insertCell().textContent = data.grade;
     row.insertCell().textContent = data.koordinat;
-
     const aksiCell = row.insertCell();
-  aksiCell.innerHTML = `
-    <button class="edit-btn" onclick="editProperti('${data.id}')">Edit</button>
-    <button class="delete-btn" onclick="deleteProperti('${data.id}')">Hapus</button>
-  `;
+    aksiCell.innerHTML = `
+      <button class="edit-btn" onclick="editProperti('${data.id}')">Edit</button>
+      <button class="delete-btn" onclick="deleteProperti('${data.id}')">Hapus</button>
+    `;
   });
 }
 
-// === Init ===
-document.addEventListener("DOMContentLoaded", () => {
-  if (propertiForm) {
-    initializeMap();
-    loadFromGoogleSheets();
-  }
-});
-
-
-// --- Edit/Delete Functions (home.html specific) ---
+// === Edit/Delete ===
 function editProperti(id) {
-  const propertiToEdit = propertis.find(p => p.id === id);
-  if (!propertiToEdit) return;
+  const data = propertis.find(p => p.id === id);
+  if (!data) return;
 
-  editModeId = id; // mode edit aktif
+  editModeId = id;
 
-  document.getElementById("alamatObjekPajak").value = propertiToEdit.alamatObjekPajak;
-  document.getElementById("blokNop").value = propertiToEdit.blokNop;
-  document.getElementById("kodeZNT").value = propertiToEdit.kodeZNT;
-  document.getElementById("sumber").value = propertiToEdit.sumber;
-  document.getElementById("jenis").value = propertiToEdit.jenis;
-  document.getElementById("tanggal").value = propertiToEdit.tanggal;
-  document.getElementById("hargaTransaksi").value = propertiToEdit.hargaTransaksi;
-  document.getElementById("jenisPenggunaan").value = propertiToEdit.jenisPenggunaan;
-  document.getElementById("luas").value = propertiToEdit.luas;
-  document.getElementById("lebarSisiDepan").value = propertiToEdit.lebarSisiDepan;
-  document.getElementById("ketinggianDariJalan").value = propertiToEdit.ketinggianDariJalan;
-  document.getElementById("bentukTanah").value = propertiToEdit.bentukTanah;
-  document.getElementById("dataKepemilikan").value = propertiToEdit.dataKepemilikan;
-  document.getElementById("namaPemilik").value = propertiToEdit.namaPemilik;
-  document.getElementById("luasBangunan").value = propertiToEdit.luasBangunan;
-  nilaiDBKBInput.value = propertiToEdit.nilaiDBKB;
-  document.getElementById("grade").value = propertiToEdit.grade;
-  document.getElementById("koordinat").value = propertiToEdit.koordinat;
+  for (const key in data) {
+    if (document.getElementById(key)) {
+      document.getElementById(key).value = data[key];
+    }
+  }
 
-  if (propertiToEdit.koordinat && map) {
-    const [lat, lng] = propertiToEdit.koordinat.split(', ').map(Number);
+  if (data.koordinat && map) {
+    const [lat, lng] = data.koordinat.split(", ").map(Number);
     if (!isNaN(lat) && !isNaN(lng)) {
       map.setView([lat, lng], 16);
       if (marker) map.removeLayer(marker);
@@ -229,100 +208,55 @@ function editProperti(id) {
   }
 }
 
-
-// --- Edit/Delete Functions (home.html specific) ---
-
-// ... (Fungsi editProperti tetap sama)
-
 function deleteProperti(id) {
-    const modalMessage = "Apakah Anda yakin ingin menghapus data ini?";
-    const modal = createModal(modalMessage, () => {
-        // Hapus dari localStorage dan array lokal (sementara)
-        propertis = propertis.filter(p => p.id !== id);
-        localStorage.setItem('propertiData', JSON.stringify(propertis));
-        renderPropertiTable(); // Render lokal untuk feedback cepat
-
-        // Kirim permintaan hapus ke Google Sheets
-        syncDeleteToGoogleSheets(id);
-
-        closeModal(modal);
-    });
+  const modal = createModal("Apakah Anda yakin ingin menghapus data ini?", () => {
+    propertis = propertis.filter(p => p.id !== id);
+    localStorage.setItem("propertiData", JSON.stringify(propertis));
+    renderPropertiTable();
+    syncDeleteToGoogleSheets(id);
+    closeModal(modal);
+  });
 }
 
-// Fungsi untuk mengirim permintaan Hapus ke Apps Script
-function syncDeleteToGoogleSheets(id) {
-    // ⚠️ Pastikan ini adalah fungsi ini yang Anda gunakan, dan hapus duplikat lainnya!
-    fetch(GOOGLE_APPS_SCRIPT_URL + "?action=delete&id=" + id, {
-        method: "GET", 
-    })
-    .then(res => {
-        if (!res.ok) {
-            throw new Error(`HTTP error! Status: ${res.status}`);
-        }
-        return res.text();
-    })
-    .then(txt => {
-        console.log("Respon server Hapus:", txt);
-        // ✅ Setelah sukses, muat ulang data dari Sheets untuk memastikan sinkronisasi penuh
-        loadFromGoogleSheets(); 
-    })
-    .catch(err => {
-        console.error("Gagal hapus dari Google Sheets:", err);
-        // 🚨 Jika gagal, panggil ulang loadFromGoogleSheets() untuk menarik kembali data yang gagal dihapus dari Sheets
-        loadFromGoogleSheets(); 
-        createModal("Gagal menghapus data dari server. Silakan coba lagi.", () => {}); // Beri notifikasi ke user
-    });
-}
-
-// --- Modal Kustom (untuk mengganti alert/confirm) ---
+// === Modal ===
 function createModal(message, onConfirm) {
-    const modalContainer = document.createElement('div');
-    modalContainer.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center';
-
-    const modalContent = document.createElement('div');
-    modalContent.className = 'bg-white p-6 rounded-lg shadow-lg max-w-sm mx-auto';
-    modalContainer.appendChild(modalContent);
-
-    const messageEl = document.createElement('p');
-    messageEl.className = 'text-gray-800 text-lg mb-4';
-    messageEl.textContent = message;
-    modalContent.appendChild(messageEl);
-
-    const buttonContainer = document.createElement('div');
-    buttonContainer.className = 'flex justify-end space-x-2';
-    modalContent.appendChild(buttonContainer);
-
-    const cancelButton = document.createElement('button');
-    cancelButton.className = 'px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition duration-300';
-    cancelButton.textContent = 'Batal';
-    cancelButton.onclick = () => closeModal(modalContainer);
-    buttonContainer.appendChild(cancelButton);
-
-    const confirmButton = document.createElement('button');
-    confirmButton.className = 'px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300';
-    confirmButton.textContent = 'Hapus';
-    confirmButton.onclick = onConfirm;
-    buttonContainer.appendChild(confirmButton);
-
-    document.body.appendChild(modalContainer);
-    return modalContainer;
+  const modal = document.createElement("div");
+  modal.className = "fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center";
+  modal.innerHTML = `
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm mx-auto">
+      <p class="text-gray-800 text-lg mb-4">${message}</p>
+      <div class="flex justify-end space-x-2">
+        <button id="cancelBtn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Batal</button>
+        <button id="confirmBtn" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Hapus</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  modal.querySelector("#cancelBtn").onclick = () => closeModal(modal);
+  modal.querySelector("#confirmBtn").onclick = onConfirm;
+  return modal;
 }
+function closeModal(modal) { modal.remove(); }
 
-function closeModal(modal) {
-    modal.remove();
-}
-
-// --- Dropdown Population ---
+// === Dropdown ===
 function populateGradeDropdown() {
-    if (!gradeSelect) return;
-
-    for (let i = 1; i <= 10; i++) {
-        const option = document.createElement("option");
-        option.value = `Grade ${i}`;
-        option.textContent = `Grade ${i}`;
-        gradeSelect.appendChild(option);
-    }
+  if (!gradeSelect) return;
+  for (let i = 1; i <= 10; i++) {
+    const option = document.createElement("option");
+    option.value = `Grade ${i}`;
+    option.textContent = `Grade ${i}`;
+    gradeSelect.appendChild(option);
+  }
 }
+
+// === Inisialisasi ===
+document.addEventListener("DOMContentLoaded", () => {
+  if (propertiForm) {
+    populateGradeDropdown();
+    initializeMap();
+    loadFromGoogleSheets();
+  }
+});
+
 
 // =========================================================================
 // --- Formulir 2 Specific JavaScript ---
@@ -671,6 +605,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 });
+
 
 
 
