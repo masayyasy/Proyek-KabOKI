@@ -673,9 +673,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     (dataReferensiLocal.penyesuaian_bentuk_tanah !== undefined ? parseFloat(dataReferensiLocal.penyesuaian_bentuk_tanah) : 0);
 
                 // Ketinggian dari jalan: ketinggian * penyesuaian_ketinggian (referensi)
-                const ketinggianValue = parseFloat(data.ketinggianDariJalan) || 0;
-                const penyesuaianKetinggianRef = dataReferensiLocal.penyesuaian_ketinggian !== undefined ? parseFloat(dataReferensiLocal.penyesuaian_ketinggian) : 0;
-                const ketinggianAdjusted = ketinggianValue * penyesuaianKetinggianRef;
+                // ✅ Ketinggian dari jalan (hasil: ketinggian_dari_jalan × penyesuaian dari tabel referensi)
+                let ketinggianValue = parseFloat(data.ketinggianDariJalan);
+                if (isNaN(ketinggianValue)) ketinggianValue = 0;
+
+                let penyesuaianKetinggianRef = parseFloat(dataReferensiLocal.penyesuaian_ketinggian);
+                if (isNaN(penyesuaianKetinggianRef)) penyesuaianKetinggianRef = 0;
+
+                const ketinggianAdjusted = Number((ketinggianValue * penyesuaianKetinggianRef).toFixed(4)); // simpan 4 digit agar nilai kecil tidak hilang
+
 
                 // Kepemilikan: SHM -> 0, else penyesuaian_sertifikat
                 const kepemilikanAdjusted = (String(data.dataKepemilikan).toUpperCase() === 'SHM') ? 0 :
