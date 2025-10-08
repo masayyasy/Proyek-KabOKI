@@ -540,6 +540,201 @@ function renderAnalisisTable3() {
         row.insertCell().textContent = new Intl.NumberFormat('id-ID').format(rataRataHargaWajarM2);
     });
 }
+// === Analisis.html (Analisis ZNT) - REPLACE THIS BLOCK IN script.js ===
+document.addEventListener('DOMContentLoaded', () => {
+    const analisisTable = document.getElementById("analisisDataTable5");
+    if (!analisisTable) {
+        console.error("Elemen tabel analisis tidak ditemukan!");
+        return;
+    }
+
+    const alamatObjekInput = document.getElementById("alamatObjekInput");
+    const alamatDesaInput = document.getElementById("alamatDesaInput");
+    const kodeZNTInput = document.getElementById("kodeZNTInput");
+    const gradeInputDropdown = document.getElementById("gradeInputDropdown");
+
+    const alamatSelects = [
+        document.getElementById("alamat1Select"),
+        document.getElementById("alamat2Select"),
+        document.getElementById("alamat3Select"),
+        document.getElementById("alamat4Select"),
+        document.getElementById("alamat5Select")
+    ];
+
+    const showAnalysisBtn = document.getElementById("showAnalysisBtn");
+    const analisisTableBody5 = document.getElementById("analisisTableBody5");
+    const tableContainer = document.querySelector(".table-container");
+
+    // Ambil data properti dan referensi dari localStorage (atau kosong)
+    let propertis = [];
+    try {
+        const data = localStorage.getItem("propertiData");
+        propertis = data ? JSON.parse(data) : [];
+    } catch (e) {
+        console.error("Gagal memuat data properti:", e);
+        propertis = [];
+    }
+    const dataReferensiLocal = JSON.parse(localStorage.getItem('dataReferensi')) || {};
+
+    // Isi dropdown alamat pembanding
+    alamatSelects.forEach(select => {
+        if (!select) return;
+        select.innerHTML = '<option value="">-- Pilih Alamat --</option>';
+        propertis.forEach(p => {
+            if (p.id && p.alamatObjekPajak) {
+                const option = document.createElement("option");
+                option.value = p.id;
+                option.textContent = p.alamatObjekPajak;
+                select.appendChild(option);
+            }
+        });
+    });
+
+    // Header hasil
+    let resultHeader = document.getElementById("analysisResultHeader");
+    if (!resultHeader) {
+        resultHeader = document.createElement("h3");
+        resultHeader.id = "analysisResultHeader";
+        resultHeader.style.textAlign = "center";
+        resultHeader.style.marginTop = "1rem";
+        resultHeader.style.marginBottom = "1rem";
+        resultHeader.textContent = "Pilih data untuk memulai Analisis ZNT";
+        if (tableContainer && tableContainer.parentNode) {
+            tableContainer.parentNode.insertBefore(resultHeader, tableContainer);
+        }
+    }
+
+    // Helper: baca grade (toleran ke format "Grade X" atau "X")
+    function parseGrade(value) {
+        if (value === null || value === undefined) return 0;
+        const digits = String(value).match(/\d+/);
+        return digits ? parseInt(digits[0], 10) : 0;
+    }
+
+    // Helper: hitung nilai wajar bumi per m2 menggunakan fungsi yang ada (jenis + waktu)
+    function computeNilaiWajarBumiPerM2(dataItem) {
+        // Gunakan fungsi calculateJenisAdjusted, calculateWaktuAdjusted, calculateHargaWajar yang sudah ada
+        const jenisAdjusted = calculateJenisAdjusted(dataItem.jenis);
+        const waktuAdjusted = calculateWaktuAdjusted(dataItem.tanggal);
+        const hargaWajar = calculateHargaWajar(dataItem.hargaTransaksi, jenisAdjusted, waktuAdjusted);
+        const luas = parseFloat(dataItem.luas) || 0;
+        const nilaiDBKB = parseFloat(dataItem.nilaiDBKB) || 0;
+        if (luas > 0) {
+            return (hargaWajar - nilaiDBKB) / luas;
+        }
+        return 0;
+    }
+
+    // Aksi tombol "Nilai"
+    if (showAnalysisBtn) {
+        showAnalysisBtn.addEventListener("click", () => {
+            analisisTableBody5.innerHTML = "";
+
+            const objekAlamat = (alamatObjekInput && alamatObjekInput.value.trim()) || '';
+            const objekDesa = (alamatDesaInput && alamatDesaInput.value.trim()) || '';
+            const objekKodeZNT = (kodeZNTInput && kodeZNTInput.value.trim()) || '';
+            const objekGrade = parseInt(gradeInputDropdown.value) || 0;
+
+            if (!objekAlamat || isNaN(objekGrade) || objekGrade <= 0) {
+                alert("Harap lengkapi Alamat dan Grade Lokasi objek yang akan dinilai (1-10).");
+                return;
+            }
+
+            const selectedIds = alamatSelects.map(s => s ? s.value : '').filter(id => id);
+            if (selectedIds.length === 0) {
+                analisisTableBody5.innerHTML = `<tr><td colspan="12" class="text-center text-gray-500">Tidak ada objek pembanding yang dipilih.</td></tr>`;
+                resultHeader.textContent = `Analisis untuk Objek: ${objekAlamat} - Harap pilih minimal satu pembanding.`;
+                return;
+            }
+
+            resultHeader.innerHTML = `
+                <b>Analisis alamat Objek yang dinilai:</b> ${objekAlamat}
+                <br> <b>Desa :</b> ${objekDesa || '-'}
+                <br> <b>ZNT : </b> ${objekKodeZNT || '-'} 
+                <br> <b>Grade:</b> ${objekGrade}
+            `;
+
+            let index = 0;
+            let totalNilaiWajarObjekZNT = 0;
+            let jumlahPembanding = 0;
+
+            selectedIds.forEach(id => {
+                const data = propertis.find(p => String(p.id) === String(id));
+                if (!data) return;
+
+                // Ambil grade pembanding
+                const pembandingGrade = parseGrade(data.grade);
+
+                // Lokasi (bakal grade) sesuai permintaan: (grade_objek - pembanding) * 0.1
+                const lokasiBakalGrade = (objekGrade - pembandingGrade) * 0.1;
+
+                // Bentuk tanah: Normal -> 0, else dari dataReferensi.penyesuaian_bentuk_tanah
+                const bentukTanahAdjusted = (String(data.bentukTanah).toLowerCase().includes('normal')) ? 0 :
+                    (dataReferensiLocal.penyesuaian_bentuk_tanah !== undefined ? parseFloat(dataReferensiLocal.penyesuaian_bentuk_tanah) : 0);
+
+                // ✅ Ketinggian dari jalan (hasil: ketinggian_dari_jalan × penyesuaian dari tabel referensi)
+                let ketinggianValue = parseFloat(data.ketinggianDariJalan);
+                if (isNaN(ketinggianValue)) ketinggianValue = 0;
+
+                let penyesuaianKetinggianRef = parseFloat(dataReferensiLocal.penyesuaian_ketinggian);
+                if (isNaN(penyesuaianKetinggianRef)) penyesuaianKetinggianRef = 0;
+
+                const ketinggianAdjusted = Number((ketinggianValue * penyesuaianKetinggianRef).toFixed(4)); // simpan 4 digit agar nilai kecil tidak hilang
+
+
+                // Kepemilikan: SHM -> 0, else penyesuaian_sertifikat
+                const kepemilikanAdjusted = (String(data.dataKepemilikan).toUpperCase() === 'SHM') ? 0 :
+                    (dataReferensiLocal.penyesuaian_sertifikat !== undefined ? parseFloat(dataReferensiLocal.penyesuaian_sertifikat) : 0);
+
+                // Nilai wajar bumi per m2: ambil dari perhitungan Formulir 2 (fungsi computeNilaiWajarBumiPerM2)
+                const nilaiWajarBumiM2 = computeNilaiWajarBumiPerM2(data);
+
+                // Nilai wajar objek / ZNT: sesuai permintaan — jumlah komponen (bukan (1+...))
+                // nilai_wajar_objek_znt = nilaiWajarBumiM2 * lokasi + nilaiWajarBumiM2 * bentuk + nilaiWajarBumiM2 * ketinggian + nilaiWajarBumiM2 * kepemilikan
+                const nilaiWajarObjekZNT = nilaiWajarBumiM2 * (lokasiBakalGrade + bentukTanahAdjusted + ketinggianAdjusted + kepemilikanAdjusted);
+
+                // Tambah ke total untuk rekonsiliasi
+                totalNilaiWajarObjekZNT += nilaiWajarObjekZNT;
+                jumlahPembanding++;
+
+                // Nilai Wajar Transaksi per m2 (dari Formulir 2) -- tampilkan angka terformat
+                const hargaWajarPerM2Display = isFinite(nilaiWajarBumiM2) ? nilaiWajarBumiM2 : 0;
+
+                // Tulis baris tabel
+                const row = analisisTableBody5.insertRow();
+                row.insertCell().textContent = ++index;
+                row.insertCell().textContent = data.alamatObjekPajak || "-";
+                row.insertCell().textContent = data.blokNop || "-";
+                row.insertCell().textContent = data.kodeZNT || "-";
+                row.insertCell().textContent = data.grade || "-";
+                row.insertCell().textContent = new Intl.NumberFormat('id-ID').format(hargaWajarPerM2Display);
+                row.insertCell().textContent = lokasiBakalGrade.toFixed(4);
+                row.insertCell().textContent = bentukTanahAdjusted.toFixed(4);
+                row.insertCell().textContent = ketinggianAdjusted.toFixed(4);
+                row.insertCell().textContent = kepemilikanAdjusted.toFixed(4);
+                row.insertCell().textContent = new Intl.NumberFormat('id-ID').format(nilaiWajarObjekZNT);
+                // nilai rekonsiliasi sementara: rata-rata sampai baris ini (kita bisa juga tampilkan akhir setelah loop)
+                const rataRataSaatIni = jumlahPembanding > 0 ? totalNilaiWajarObjekZNT / jumlahPembanding : 0;
+                row.insertCell().textContent = new Intl.NumberFormat('id-ID').format(rataRataSaatIni);
+            });
+
+            // Jika ingin menampilkan nilai rekonsiliasi final di footer / baris tersendiri:
+            if (jumlahPembanding === 0) {
+                // nothing
+            } else {
+                // (Opsional) tambahkan baris ringkasan di bawah tabel (hapus komentar jika ingin)
+                /*
+                const summaryRow = analisisTableBody5.insertRow();
+                summaryRow.insertCell().textContent = '';
+                summaryRow.insertCell().textContent = 'Rata-rata Rekonsiliasi';
+                summaryRow.insertCell().colSpan = 9; // sesuaikan spasi
+                summaryRow.insertCell().textContent = '';
+                summaryRow.insertCell().textContent = new Intl.NumberFormat('id-ID').format(totalNilaiWajarObjekZNT / jumlahPembanding);
+                */
+            }
+        });
+    }
+});
 
 // =========================================================================
 // --- Fungsi Perhitungan ---
