@@ -650,7 +650,7 @@ document.addEventListener('DOMContentLoaded', () => {
             resultHeader.innerHTML = `
                 <b>Analisis alamat Objek yang dinilai:</b> ${objekAlamat}
                 <br> <b>Desa :</b> ${objekDesa || '-'}
-                <br> <b>ZNT : </b> ${objekKodeZNT || '-'} 
+                <br> <b>ZNT : </b>${objekKodeZNT || '-'} 
                 <br> <b>Grade:</b> ${objekGrade}
             `;
 
@@ -672,15 +672,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const bentukTanahAdjusted = (String(data.bentukTanah).toLowerCase().includes('normal')) ? 0 :
                     (dataReferensiLocal.penyesuaian_bentuk_tanah !== undefined ? parseFloat(dataReferensiLocal.penyesuaian_bentuk_tanah) : 0);
 
-                // ✅ Ketinggian dari jalan (hasil: ketinggian_dari_jalan × penyesuaian dari tabel referensi)
-                let ketinggianValue = parseFloat(data.ketinggianDariJalan);
-                if (isNaN(ketinggianValue)) ketinggianValue = 0;
-
-                let penyesuaianKetinggianRef = parseFloat(dataReferensiLocal.penyesuaian_ketinggian);
-                if (isNaN(penyesuaianKetinggianRef)) penyesuaianKetinggianRef = 0;
-
-                const ketinggianAdjusted = Number((ketinggianValue * penyesuaianKetinggianRef).toFixed(4)); // simpan 4 digit agar nilai kecil tidak hilang
-
+                // Ketinggian dari jalan: ketinggian * penyesuaian_ketinggian (referensi)
+                const ketinggianValue = parseFloat(data.ketinggianDariJalan) || 0;
+                const penyesuaianKetinggianRef = dataReferensiLocal.penyesuaian_ketinggian !== undefined ? parseFloat(dataReferensiLocal.penyesuaian_ketinggian) : 0;
+                const ketinggianAdjusted = ketinggianValue * penyesuaianKetinggianRef;
 
                 // Kepemilikan: SHM -> 0, else penyesuaian_sertifikat
                 const kepemilikanAdjusted = (String(data.dataKepemilikan).toUpperCase() === 'SHM') ? 0 :
@@ -708,10 +703,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 row.insertCell().textContent = data.kodeZNT || "-";
                 row.insertCell().textContent = data.grade || "-";
                 row.insertCell().textContent = new Intl.NumberFormat('id-ID').format(hargaWajarPerM2Display);
-                row.insertCell().textContent = lokasiBakalGrade.toFixed(4);
-                row.insertCell().textContent = bentukTanahAdjusted.toFixed(4);
+                row.insertCell().textContent = lokasiBakalGrade.toFixed(2);
+                row.insertCell().textContent = bentukTanahAdjusted.toFixed(2);
                 row.insertCell().textContent = ketinggianAdjusted.toFixed(4);
-                row.insertCell().textContent = kepemilikanAdjusted.toFixed(4);
+                row.insertCell().textContent = kepemilikanAdjusted.toFixed(2);
                 row.insertCell().textContent = new Intl.NumberFormat('id-ID').format(nilaiWajarObjekZNT);
                 // nilai rekonsiliasi sementara: rata-rata sampai baris ini (kita bisa juga tampilkan akhir setelah loop)
                 const rataRataSaatIni = jumlahPembanding > 0 ? totalNilaiWajarObjekZNT / jumlahPembanding : 0;
