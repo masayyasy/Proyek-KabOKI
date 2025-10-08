@@ -696,47 +696,58 @@ function exportTableToCSV(tableId, filename) {
 }
 
 
-// --- Initialization on Page Load ---
 document.addEventListener("DOMContentLoaded", () => {
-    if (propertiForm) {
-        populateGradeDropdown();
-        initializeMap();
-        loadReferenceData();
-        loadFromGoogleSheets(); // <-- ambil data dari Google Sheets saat load
-        referenceInputs.forEach(input => input.addEventListener('change', saveReferenceData));
-        if (exportHomeTableBtn) {
-            exportHomeTableBtn.addEventListener('click', () => {
-                exportTableToCSV('propertiDataTable', 'data_properti_input.csv');
-            });
-        }
-    }
+  // --- HOME (index.html) ---
+  if (propertiForm) {
+    populateGradeDropdown();
+    initializeMap();
+    loadReferenceData();
+    loadFromGoogleSheets(); // Ambil data dari Sheets saat load
+    referenceInputs.forEach(input => input.addEventListener('change', saveReferenceData));
+    if (exportHomeTableBtn) {
+      exportHomeTableBtn.addEventListener('click', () => {
+        exportTableToCSV('propertiDataTable', 'data_properti_input.csv');
+      });
+    }
+  }
 
-    // Logika untuk formulir2.html
-    if (document.getElementById("analisisDataTable")) {
-        dataReferensi = JSON.parse(localStorage.getItem('dataReferensi')) || {};
-        // renderAnalisisTable() dipanggil di loadFromGoogleSheets()
-        if (exportTable2Btn) {
-            exportTable2Btn.addEventListener('click', () => {
-                exportTableToCSV('analisisDataTable', 'analisis_nilai_pasar_wajar.csv');
-            });
-        }
-    }
+  // --- FORMULIR 2 ---
+  if (document.getElementById("analisisDataTable")) {
+    dataReferensi = JSON.parse(localStorage.getItem('dataReferensi')) || {};
+    propertis = JSON.parse(localStorage.getItem('propertiData')) || [];
+    
+    // 🔹 Render langsung dari localStorage dulu agar tampil instan
+    renderAnalisisTable();
 
-    // Logika untuk formulir3.html
-    if (analisisTable3) {
-        dataReferensi = JSON.parse(localStorage.getItem('dataReferensi')) || {};
-        // renderAnalisisTable3() dipanggil di loadFromGoogleSheets()
-        if (gradeInputJudul) {
-            // Gunakan 'input' atau 'change' untuk memicu render ulang
-            gradeInputJudul.addEventListener('change', renderAnalisisTable3);
-            gradeInputJudul.addEventListener('input', renderAnalisisTable3);
-        }
-        if (exportTable3Btn) {
-            exportTable3Btn.addEventListener('click', () => {
-                exportTableToCSV('analisisDataTable3', 'analisis_rekonsiliasi.csv');
-            });
-        }
-    }
+    // 🔹 Lalu ambil versi terbaru dari Google Sheets (jaga sinkronisasi)
+    loadFromGoogleSheets();
 
+    if (exportTable2Btn) {
+      exportTable2Btn.addEventListener('click', () => {
+        exportTableToCSV('analisisDataTable', 'analisis_nilai_pasar_wajar.csv');
+      });
+    }
+  }
 
+  // --- FORMULIR 3 ---
+  if (analisisTable3) {
+    dataReferensi = JSON.parse(localStorage.getItem('dataReferensi')) || {};
+    propertis = JSON.parse(localStorage.getItem('propertiData')) || [];
+
+    // 🔹 Render langsung dari localStorage
+    renderAnalisisTable3();
+
+    // 🔹 Sinkronkan lagi dari Google Sheets
+    loadFromGoogleSheets();
+
+    if (gradeInputJudul) {
+      gradeInputJudul.addEventListener('change', renderAnalisisTable3);
+      gradeInputJudul.addEventListener('input', renderAnalisisTable3);
+    }
+    if (exportTable3Btn) {
+      exportTable3Btn.addEventListener('click', () => {
+        exportTableToCSV('analisisDataTable3', 'analisis_rekonsiliasi.csv');
+      });
+    }
+  }
 });
