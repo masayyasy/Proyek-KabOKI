@@ -31,6 +31,7 @@ function syncToGoogleSheets(data) {
     // ✅ PERBAIKAN KRUSIAL: Tambahkan action: "insert" agar Apps Script tahu ini adalah data baru
     fetch(GOOGLE_APPS_SCRIPT_URL, {
         method: "POST",
+        mode: "no-cors"
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...data, action: "insert" }) // Data dikirim dengan action: insert
     })
@@ -171,6 +172,7 @@ if (propertiForm) {
                 // 🔹 Kirim update ke Google Sheets
                 fetch(GOOGLE_APPS_SCRIPT_URL, {
                     method: "POST",
+                    mode: "no-cors"
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ ...newProperti, action: "update" })
                 })
@@ -751,3 +753,4 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
+
